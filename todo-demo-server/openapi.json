@@ -1,0 +1,602 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Todo Demo API",
+    "description": "Todo Demo の REST API。フロントの型生成元。",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/auth-api/dev-login": {
+      "post": {
+        "tags": [
+          "authApi"
+        ],
+        "operationId": "post_dev_login",
+        "responses": {
+          "200": {
+            "description": "dev バイパスでログイン成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostDevLoginResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "DEV_BYPASS_AUTH=false のとき"
+          }
+        }
+      }
+    },
+    "/auth-api/google": {
+      "post": {
+        "tags": [
+          "authApi"
+        ],
+        "operationId": "post_google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostGoogleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "ログイン成功（Set-Cookie: session=...）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostGoogleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ID Token が不正"
+          }
+        }
+      }
+    },
+    "/auth-api/logout": {
+      "post": {
+        "tags": [
+          "authApi"
+        ],
+        "summary": "セッション Cookie を削除して 204 を返す。",
+        "operationId": "post_logout",
+        "responses": {
+          "204": {
+            "description": "ログアウト成功（Cookie 削除）"
+          },
+          "401": {
+            "description": "セッション無効"
+          }
+        }
+      }
+    },
+    "/auth-api/me": {
+      "get": {
+        "tags": [
+          "authApi"
+        ],
+        "operationId": "get_me",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未認証"
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "ヘルスチェック。Phase 3 のロードバランサ / ヘルスチェッカーから叩かれる想定。",
+        "operationId": "get_healthz",
+        "responses": {
+          "200": {
+            "description": "サーバー起動中",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHealthzResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo-api/todos": {
+      "get": {
+        "tags": [
+          "todoApi"
+        ],
+        "operationId": "get_todos",
+        "parameters": [
+          {
+            "name": "completed",
+            "in": "query",
+            "description": "`true` / `false` で完了状態に絞り込み。未指定で全件。",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "自分の Todo 一覧（createdAt 降順）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetTodosResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未認証"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "todoApi"
+        ],
+        "operationId": "post_todo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTodoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "作成された Todo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostTodoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未認証"
+          }
+        }
+      }
+    },
+    "/todo-api/todos/{id}": {
+      "get": {
+        "tags": [
+          "todoApi"
+        ],
+        "operationId": "get_todo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Todo の id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTodoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未認証"
+          },
+          "404": {
+            "description": "id に該当する Todo が無い（他ユーザーの Todo も NotFound）"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "todoApi"
+        ],
+        "operationId": "put_todo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Todo の id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutTodoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutTodoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "title が空"
+          },
+          "401": {
+            "description": "未認証"
+          },
+          "404": {
+            "description": "id に該当する Todo が無い（他ユーザーの Todo も NotFound）"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "todoApi"
+        ],
+        "operationId": "delete_todo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Todo の id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "削除成功"
+          },
+          "401": {
+            "description": "未認証"
+          },
+          "404": {
+            "description": "id に該当する Todo が無い（他ユーザーの Todo も NotFound）"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GetHealthzResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "GetMeResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "picture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "GetTodoResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "title",
+          "completed",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GetTodosResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "title",
+          "completed",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PostDevLoginResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "picture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PostGoogleRequest": {
+        "type": "object",
+        "required": [
+          "idToken"
+        ],
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "フロントが `@react-oauth/google` で受け取った Google ID Token"
+          }
+        }
+      },
+      "PostGoogleResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "picture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PostTodoRequest": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "PostTodoResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "title",
+          "completed",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PutTodoRequest": {
+        "type": "object",
+        "description": "title / completed の **両方とも Option**。`Some` のフィールドだけ更新する。",
+        "properties": {
+          "completed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PutTodoResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "title",
+          "completed",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "system",
+      "description": "ヘルスチェック等のシステムエンドポイント"
+    },
+    {
+      "name": "todoApi",
+      "description": "Todo CRUD"
+    },
+    {
+      "name": "authApi",
+      "description": "Google OAuth 認証（フェーズ 2）"
+    }
+  ]
+}

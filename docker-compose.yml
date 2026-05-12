@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: todo
+      POSTGRES_PASSWORD: todo
+      POSTGRES_DB: todo
+    ports:
+      # 他プロジェクトの 5432 と衝突しないよう、ホスト側のみ 5438 にずらす
+      - "5438:5432"
+    volumes:
+      # Postgres 18+ はマウントポイントが /var/lib/postgresql に変更
+      # （pg_upgrade --link を使えるよう major-version-specific subdir に変更）
+      - ./.docker/pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todo -d todo"]
+      interval: 2s
+      timeout: 5s
+      retries: 10

@@ -1,0 +1,55 @@
+[package]
+name = "todo-demo-server"
+version = "0.1.0"
+edition = "2021"
+publish = false
+default-run = "todo-demo-server"
+
+[dependencies]
+# 非同期ランタイム
+tokio = { version = "1", features = ["full"] }
+
+# Web フレームワーク
+axum = "0.8"
+axum-extra = { version = "0.12", features = ["cookie"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+
+# ORM (Postgres / sqlx-postgres + rustls)
+sea-orm = { version = "1.1", features = [
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+    "macros",
+    "with-chrono",
+] }
+
+# シリアライズ / 日付
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
+
+# エラー型
+thiserror = "2"
+strum_macros = "0.28"
+
+# OpenAPI
+utoipa = { version = "5", features = ["axum_extras", "chrono"] }
+utoipauto = "0.2"
+
+# ログ
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# 環境変数（dotenv は unmaintained のため後継 dotenvy を採用）
+dotenvy = "0.15"
+# 環境変数 → struct のデシリアライズ
+envy = "0.4"
+
+# 認証関連
+jsonwebtoken = { version = "10", features = ["aws_lc_rs"] }
+reqwest = { version = "0.13", default-features = false, features = [
+    "rustls",
+    "json",
+] }
+
+# Cookie の max_age 設定用（cookie クレート経由で再エクスポートされる time）
+time = "0.3"

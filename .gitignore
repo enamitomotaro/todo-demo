@@ -1,0 +1,28 @@
+# 環境変数（機密）
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Docker のローカル DB データ
+.docker/
+
+# Rust ビルド成果物
+todo-demo-server/target/
+
+# Node / Bun
+node_modules/
+todo-demo-front/.next/
+todo-demo-front/out/
+
+# Claude Code 設定（ローカル運用）
+.claude/
+
+# エディタ / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# ログ
+*.log

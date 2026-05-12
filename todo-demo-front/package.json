@@ -1,0 +1,46 @@
+{
+  "name": "todo-demo-front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3008",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "api:gen": "swagger-typescript-api generate --extract-request-params --union-enums -p ../todo-demo-server/openapi.json -o src/apis/generated --name TodoApi.ts"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.0.1",
+    "@mui/material": "^9.0.1",
+    "@mui/material-nextjs": "^9.0.1",
+    "@react-oauth/google": "^0.13.5",
+    "@tanstack/react-query": "^5.100.10",
+    "next": "16.2.6",
+    "notistack": "^3.0.2",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-transition-group": "^4.4.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/react-transition-group": "^4.4.12",
+    "swagger-typescript-api": "^13.9.1",
+    "typescript": "^6.0.3"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
+}
